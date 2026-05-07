@@ -24,7 +24,7 @@ export default function Home() {
             <span className="block text-amber-400">Spa & Masajes</span>
           </h1>
           <p className="text-stone-300 text-lg md:text-xl max-w-xl mx-auto leading-relaxed">
-            Descubre el equilibrio entre cuerpo y mente.<br></br> Reserva tu sesión en minutos.
+            Equilibrio entre cuerpo y mente.<br></br> Reserva tu sesión en minutos.
           </p>
           <div className="flex flex-wrap items-center justify-center gap-6 mt-10 text-stone-400 text-sm">
             <span className="flex items-center gap-2">
