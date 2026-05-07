@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { supabase } from '@/lib/supabase'
+import { sendConfirmationEmail } from '@/lib/emails'
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url)
@@ -53,6 +54,8 @@ export async function POST(request: NextRequest) {
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 })
   }
+
+  sendConfirmationEmail(data).catch(console.error)
 
   return NextResponse.json({ appointment: data }, { status: 201 })
 }

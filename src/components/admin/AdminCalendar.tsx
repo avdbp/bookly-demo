@@ -24,6 +24,30 @@ export default function AdminCalendar({ onLogout }: { onLogout: () => void }) {
   const [appointments, setAppointments] = useState<Appointment[]>([])
   const [selectedDay, setSelectedDay] = useState<Date | null>(null)
   const [loading, setLoading] = useState(false)
+  const [summaryEnabled, setSummaryEnabled] = useState(true)
+  const [summaryLoading, setSummaryLoading] = useState(false)
+
+  useEffect(() => {
+    fetch('/api/admin/settings')
+      .then((r) => r.json())
+      .then((d) => {
+        if (d.settings?.daily_summary_enabled !== undefined) {
+          setSummaryEnabled(d.settings.daily_summary_enabled === 'true')
+        }
+      })
+  }, [])
+
+  const toggleSummary = async () => {
+    setSummaryLoading(true)
+    const newValue = !summaryEnabled
+    setSummaryEnabled(newValue)
+    await fetch('/api/admin/settings', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ key: 'daily_summary_enabled', value: String(newValue) }),
+    })
+    setSummaryLoading(false)
+  }
 
   const fetchAppointments = useCallback(async (from: string, to: string) => {
     setLoading(true)
@@ -88,10 +112,25 @@ export default function AdminCalendar({ onLogout }: { onLogout: () => void }) {
             <p className="text-stone-400 text-xs">Panel de reservas</p>
           </div>
         </div>
-        <button onClick={onLogout} className="flex items-center gap-2 text-stone-400 hover:text-white transition-colors text-sm">
-          <LogOut className="w-4 h-4" />
-          Salir
-        </button>
+        <div className="flex items-center gap-4">
+          {/* Daily summary toggle */}
+          <div className="flex items-center gap-2.5">
+            <span className="text-stone-400 text-xs hidden sm:block">Resumen diario</span>
+            <button
+              onClick={toggleSummary}
+              disabled={summaryLoading}
+              className={`relative w-10 h-5 rounded-full transition-colors duration-200 focus:outline-none
+                ${summaryEnabled ? 'bg-amber-500' : 'bg-stone-600'}`}
+            >
+              <span className={`absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform duration-200
+                ${summaryEnabled ? 'translate-x-5' : 'translate-x-0'}`} />
+            </button>
+          </div>
+          <button onClick={onLogout} className="flex items-center gap-2 text-stone-400 hover:text-white transition-colors text-sm">
+            <LogOut className="w-4 h-4" />
+            Salir
+          </button>
+        </div>
       </div>
 
       <div className="max-w-6xl mx-auto px-4 py-6">
