@@ -17,7 +17,6 @@ export async function GET(request: NextRequest) {
     .eq('status', 'confirmed')
 
   if (error) {
-    console.error('GET error:', JSON.stringify(error))
     return NextResponse.json({ error: error.message }, { status: 500 })
   }
 
@@ -32,7 +31,6 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'All fields are required' }, { status: 400 })
   }
 
-  // Check slot is still available
   const { data: existing } = await supabase
     .from('appointments')
     .select('id')
@@ -55,7 +53,11 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: error.message }, { status: 500 })
   }
 
-  sendConfirmationEmail(data).catch((err) => console.error('EMAIL ERROR:', err))
+  try {
+    await sendConfirmationEmail(data)
+  } catch (err) {
+    console.error('EMAIL ERROR:', JSON.stringify(err))
+  }
 
   return NextResponse.json({ appointment: data }, { status: 201 })
 }
