@@ -5,7 +5,7 @@ import { es } from 'date-fns/locale'
 
 const resend = new Resend(process.env.RESEND_API_KEY)
 
-const FROM = 'Serenity Spa <onboarding@resend.dev>'
+const FROM = 'Serenity Spa <noreply@rocketmedia.website>'
 
 function formatDate(dateStr: string) {
   return format(parseISO(dateStr), "EEEE d 'de' MMMM 'de' yyyy", { locale: es })
